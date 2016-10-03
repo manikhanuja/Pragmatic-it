@@ -163,11 +163,21 @@ lastPhraseIndex = andTokens.lastIndexOf(pharseIdentifier);
 if (firstPhraseIndex > -1 && lastPhraseIndex > -1){
 pharseQueryString = andTokens.substring(firstPhraseIndex, lastPhraseIndex);
             phraseSet = phraseWordQuery(index, pharseQueryString,fileNames);
+            //pharseQueryString.replaceAll(" ","&");
             phraseList = new ArrayList<>(phraseSet);
 }
+if (firstPhraseIndex == 0){
+    if(lastPhraseIndex+1 == input.length()){
+        break;
+    }
+   andTokens = andTokens.substring(lastPhraseIndex + 1, andTokens.length()); 
+}else if(lastPhraseIndex+1 == input.length()){
+    andTokens = andTokens.substring(0,firstPhraseIndex-1);
+}
 //andTokens = andTokens.replaceAll(pharseQueryString, "");
-andTokens = andTokens.substring(lastPhraseIndex + 1, input.length());
+//if(!andTokens.isEmpty()){
 StringTokenizer andTokensizer = new StringTokenizer(andTokens, " ");
+
 Set<String> andTokensResultSet = new TreeSet<>();
 List<String> andTokensResults = new ArrayList<>();
 while(andTokensizer.hasMoreTokens()){
