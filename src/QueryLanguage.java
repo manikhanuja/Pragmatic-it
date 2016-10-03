@@ -91,8 +91,8 @@ public class QueryLanguage {
             System.out.println("Enter Query or :q to return to Main Menu: ");
               while (counter == 0) {
                 String query1 = readQueryFromUser();
-                queryParser(index, query1,fileNames);
-                
+                //queryParser(index, query1,fileNames);
+                StringParser(index, query1,fileNames);
             if (query1.equalsIgnoreCase(":q")) {
             System.out.println("Exit index, return to the main menu!");
             main(new String[] {"a","b","c"});
@@ -134,6 +134,79 @@ public class QueryLanguage {
         }
         main(new String[] {"a","b","c"});
     }
+
+
+ 
+public static void StringParser(NaiveInvertedIndex index, String query,List<String> fileNames) throws IOException {
+ 
+String pharseIdentifier = "\"";
+ 
+// Prepare a final outPut List.
+ 
+String input = query;
+if (input.equalsIgnoreCase(":q")) {
+            System.out.println("Exit index, return to the main menu!");
+            main(new String[] {"a","b","c"});
+        }
+
+StringTokenizer orTokenizer = new StringTokenizer(input, "+");
+List<List<String>> resultList = new ArrayList<>();
+Set<String> phraseSet;
+List<String> phraseList = new ArrayList<>();
+int firstPhraseIndex = -1;
+int lastPhraseIndex = -1;
+String pharseQueryString = null;
+while(orTokenizer.hasMoreTokens()){
+String andTokens = orTokenizer.nextToken();
+firstPhraseIndex = andTokens.indexOf(pharseIdentifier);
+lastPhraseIndex = andTokens.lastIndexOf(pharseIdentifier);
+if (firstPhraseIndex > -1 && lastPhraseIndex > -1){
+pharseQueryString = andTokens.substring(firstPhraseIndex, lastPhraseIndex);
+            phraseSet = phraseWordQuery(index, pharseQueryString,fileNames);
+            phraseList = new ArrayList<>(phraseSet);
+}
+//andTokens = andTokens.replaceAll(pharseQueryString, "");
+andTokens = andTokens.substring(lastPhraseIndex + 1, input.length());
+StringTokenizer andTokensizer = new StringTokenizer(andTokens, " ");
+Set<String> andTokensResultSet = new TreeSet<>();
+List<String> andTokensResults = new ArrayList<>();
+while(andTokensizer.hasMoreTokens()){
+    String toStem = andTokensizer.nextToken();
+    String word = SimpleEngine.callPoterStem(toStem);
+// do a function search passing andTokensizer.nextToken and store it in andTokensResults.
+// do a intersection of  the results of other token with andTokensResults and store the same in andTokensResults.
+    if(andTokensResultSet.isEmpty()){
+                andTokensResultSet = wordQuery(index, word);//add ps 
+                } else{
+                   andTokensResultSet.retainAll(index.getDocumentId(word));
+                }
+                andTokensResults = new ArrayList<>(andTokensResultSet);
+}
+// now do a function search passing pharseQueryString if pharseQueryString is not null AND do a intersection of  the results
+// store the results of all the andTokens into the result list.
+resultList.add(andTokensResults);
+ 
+}
+ List<String> finalResultList = new ArrayList<>();
+ Set<String> set = new HashSet<>();
+
+// Now traverse the resultList and do the union of each list stored.
+ for (List a : resultList) {
+            set.addAll(a);
+        }
+        finalResultList = new ArrayList<>(set);
+
+// finally add the result of strictPhrase into the same and return your result.
+        
+            set.addAll(phraseList);
+        
+        finalResultList = new ArrayList<>(set);
+        Iterator iterator = finalResultList.iterator();
+        while (iterator.hasNext()) {
+            System.out.println("Query Parser Index: " + fileNames.get(Integer.parseInt(iterator.next().toString())));
+        } 
+}
+
 
 public static void queryParser(NaiveInvertedIndex index, String query,List<String> fileNames) throws IOException {
         List<String> phraseList = new ArrayList<>();
