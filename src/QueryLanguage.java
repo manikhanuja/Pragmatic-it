@@ -140,7 +140,7 @@ public class QueryLanguage {
 public static void StringParser(NaiveInvertedIndex index, String query,List<String> fileNames) throws IOException {
  
 String pharseIdentifier = "\"";
- 
+int count = 0;
 // Prepare a final outPut List.
  
 String input = query;
@@ -177,9 +177,10 @@ if (firstPhraseIndex == 0){
 //andTokens = andTokens.replaceAll(pharseQueryString, "");
 //if(!andTokens.isEmpty()){
 StringTokenizer andTokensizer = new StringTokenizer(andTokens, " ");
-
+System.out.println("Count of andTokensizer elements: " + andTokensizer.countTokens());
 Set<String> andTokensResultSet = new TreeSet<>();
 List<String> andTokensResults = new ArrayList<>();
+count++;
 while(andTokensizer.hasMoreTokens()){
     String toStem = andTokensizer.nextToken();
     String word = SimpleEngine.callPoterStem(toStem);
@@ -207,11 +208,19 @@ resultList.add(andTokensResults);
         finalResultList = new ArrayList<>(set);
 
 // finally add the result of strictPhrase into the same and return your result.
-        
+        System.out.println("value of count: "+count);
+        if(count<=1 ) {
+            if(!phraseList.isEmpty())
+            {
+            set.retainAll(phraseList);
+            }
+        }
+        else{
             set.addAll(phraseList);
-        
+        }
         finalResultList = new ArrayList<>(set);
         Iterator iterator = finalResultList.iterator();
+        count = 0;
         while (iterator.hasNext()) {
             System.out.println("Query Parser Index: " + fileNames.get(Integer.parseInt(iterator.next().toString())));
         } 
