@@ -171,8 +171,8 @@ public static void queryParser(NaiveInvertedIndex index, String query,List<Strin
                 }
             while (andTokensizer.hasMoreTokens()) {
                 String toStem = andTokensizer.nextToken();
-                String temp[] = SimpleEngine.callPC(toStem);
-                for(String word: temp){
+                String word = SimpleEngine.callPoterStem(toStem);
+                
                 if(andTokensResultSet.isEmpty()){
                 andTokensResultSet = wordQuery(index, word);//add ps 
                 } else{
@@ -187,7 +187,7 @@ public static void queryParser(NaiveInvertedIndex index, String query,List<Strin
 // do a function search passing andTokensizer.nextToken and store it in andTokensResults.
 // do a intersection of  the results of other token with andTokensResults and store the same in andTokensResults.
 
-            }
+            
 // store the results of all the andTokens into the result lsit.
             
             resultList.add(andTokensResults);
@@ -221,17 +221,15 @@ public static void queryParser(NaiveInvertedIndex index, String query,List<Strin
     public static Set wordQuery(NaiveInvertedIndex index, String word) {
         System.out.println("I am General Query");
         Set<Integer> tempDocSet = new HashSet<>();
-        String temp[] = SimpleEngine.callPC(word);
-                for(String temp1: temp){
-                    System.out.println(index.getPostings(word));
+        System.out.println(index.getPostings(word));
         if(("null").equals(index.getPostings(word).toString())){
             System.out.println("Word does not present, enter query again or :q to quit ");
         } else {
 
-            tempDocSet = index.getPostings(temp1).keySet();
+            tempDocSet = index.getPostings(word).keySet();
         }
         
-                }
+                
         return tempDocSet;
     }
     

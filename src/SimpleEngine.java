@@ -195,4 +195,15 @@ public class SimpleEngine {
 		return processToken;
 
 	}
-}
+        public static String callPoterStem(String token){
+		String processToken=null;
+
+		ArrayList<String> normalizeToken=new ArrayList<>();
+		normalizeToken = NormalizeToken.normalizeToken(token);
+		for (String tkn : normalizeToken) {
+                    processToken = PorterStemmer.processToken(tkn);
+                }
+		return processToken;
+
+	
+}}
